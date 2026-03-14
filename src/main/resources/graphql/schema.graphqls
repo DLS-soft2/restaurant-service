@@ -1,0 +1,73 @@
+type Restaurant {
+    restaurantId: ID!
+    name: String!
+    address: String!
+    phoneNumber: String
+    email: String
+    description: String
+    openingHours: String
+    isOpen: Boolean!
+    isAvailable: Boolean!
+}
+
+type MenuItem {
+    menuItemId: ID!
+    name: String!
+    description: String
+    price: Float!
+    restaurant: Restaurant
+}
+
+type Query {
+    getAllRestaurants: [Restaurant]
+    getRestaurantById(restaurantId: ID!): Restaurant
+    getRestaurantByName(name: String!): Restaurant
+    getRestaurantsByAvailability(isAvailable: Boolean!): [Restaurant]
+    getRestaurantsByOpenStatus(isOpen: Boolean!): [Restaurant]
+    getMenuItemsByRestaurantId(restaurantId: ID!): [MenuItem]
+    getMenuItemById(menuItemId: ID!): MenuItem
+}
+
+type Mutation {
+    addRestaurant(
+        name: String!
+        address: String!
+        phoneNumber: String
+        email: String
+        description: String
+        openingHours: String
+        isOpen: Boolean!
+        isAvailable: Boolean!
+    ): Restaurant
+
+    updateRestaurant(
+        restaurantId: ID!
+        name: String!
+        address: String!
+        phoneNumber: String
+        email: String
+        description: String
+        openingHours: String
+        isOpen: Boolean!
+        isAvailable: Boolean!
+    ): Restaurant
+
+    deleteRestaurant(restaurantId: ID!): Boolean
+
+    addMenuItem(
+        name: String!
+        description: String
+        price: Float!
+        restaurantId: ID!
+    ): MenuItem
+
+    updateMenuItem(
+        menuItemId: ID!
+        name: String!
+        description: String
+        price: Float!
+        restaurantId: ID!
+    ): MenuItem
+
+    deleteMenuItem(menuItemId: ID!): Boolean
+}
