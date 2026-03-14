@@ -19,25 +19,25 @@ The service exposes both REST and GraphQL endpoints. REST is used for standard C
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/restaurant` | List all restaurants |
-| GET | `/api/restaurant/{id}` | Get restaurant by ID |
-| GET | `/api/restaurant/name/{name}` | Get restaurant by name |
-| GET | `/api/restaurant/available/{isAvailable}` | Get restaurants by availability |
-| GET | `/api/restaurant/open/{isOpen}` | Get restaurants by open status |
-| GET | `/api/restaurant/location/{location}` | Get restaurants by location |
-| GET | `/api/restaurant/paged` | List restaurants with pagination (`?page=0&size=10`) |
-| GET | `/api/restaurant/paged/available/{isAvailable}` | Paginated restaurants by availability |
-| GET | `/api/restaurant/paged/open/{isOpen}` | Paginated restaurants by open status |
-| GET | `/api/restaurant/search` | Search restaurants by query (`?query=pizza`) |
-| POST | `/api/restaurant/add` | Create restaurant |
-| PUT | `/api/restaurant/update/{id}` | Update restaurant |
-| DELETE | `/api/restaurant/delete/{id}` | Delete restaurant |
-| GET | `/api/menu-item` | List all menu items |
-| GET | `/api/menu-item/{id}` | Get menu item by ID |
-| GET | `/api/menu-item/restaurant/{restaurantId}` | Get menu items by restaurant |
-| POST | `/api/menu-item/add` | Create menu item |
-| PUT | `/api/menu-item/update/{id}` | Update menu item |
-| DELETE | `/api/menu-item/delete/{id}` | Delete menu item |
+| GET | `/api/v1/restaurant` | List all restaurants |
+| GET | `/api/v1/restaurant/{id}` | Get restaurant by ID |
+| GET | `/api/v1/restaurant/name/{name}` | Get restaurant by name |
+| GET | `/api/v1/restaurant/available/{isAvailable}` | Get restaurants by availability |
+| GET | `/api/v1/restaurant/open/{isOpen}` | Get restaurants by open status |
+| GET | `/api/v1/restaurant/location/{location}` | Get restaurants by location |
+| GET | `/api/v1/restaurant/paged` | List restaurants with pagination (`?page=0&size=10`) |
+| GET | `/api/v1/restaurant/paged/available/{isAvailable}` | Paginated restaurants by availability |
+| GET | `/api/v1/restaurant/paged/open/{isOpen}` | Paginated restaurants by open status |
+| GET | `/api/v1/restaurant/search` | Search restaurants by query (`?query=pizza`) |
+| POST | `/api/v1/restaurant/add` | Create restaurant |
+| PUT | `/api/v1/restaurant/update/{id}` | Update restaurant |
+| DELETE | `/api/v1/restaurant/delete/{id}` | Delete restaurant |
+| GET | `/api/v1/menu-item` | List all menu items |
+| GET | `/api/v1/menu-item/{id}` | Get menu item by ID |
+| GET | `/api/v1/menu-item/restaurant/{restaurantId}` | Get menu items by restaurant |
+| POST | `/api/v1/menu-item/add` | Create menu item |
+| PUT | `/api/v1/menu-item/update/{id}` | Update menu item |
+| DELETE | `/api/v1/menu-item/delete/{id}` | Delete menu item |
 
 ### Error Handling
 
