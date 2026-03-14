@@ -6,9 +6,11 @@ import com.dls.restaurantservice.Entity.MenuItem;
 import com.dls.restaurantservice.Repository.MenuItemRepository;
 import com.dls.restaurantservice.Repository.RestaurantRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!test")
 public class InitData implements CommandLineRunner {
 
     private final RestaurantRepository restaurantRepository;
