@@ -1,9 +1,9 @@
 package com.dls.restaurantservice.Controller;
 
+import com.dls.restaurantservice.DTO.PageResponse;
 import com.dls.restaurantservice.DTO.RestaurantRequest;
 import com.dls.restaurantservice.DTO.RestaurantResponse;
 import com.dls.restaurantservice.Service.RestaurantService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -69,5 +69,40 @@ public class RestaurantController {
     @DeleteMapping("/delete/{id}")
     public void deleteRestaurant(@PathVariable Long id) {
         restaurantService.DeleteRestaurant(id);
+    }
+
+    // ---- Pagination endpoints ----
+
+    @GetMapping("/paged")
+    public PageResponse<RestaurantResponse> getAllRestaurantsPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return restaurantService.GetAllRestaurantsPaged(page, size);
+    }
+
+    @GetMapping("/paged/available/{isAvailable}")
+    public PageResponse<RestaurantResponse> getAvailableRestaurantsPaged(
+            @PathVariable Boolean isAvailable,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return restaurantService.GetAvailableRestaurantsPaged(isAvailable, page, size);
+    }
+
+    @GetMapping("/paged/open/{isOpen}")
+    public PageResponse<RestaurantResponse> getOpenRestaurantsPaged(
+            @PathVariable Boolean isOpen,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return restaurantService.GetOpenRestaurantsPaged(isOpen, page, size);
+    }
+
+    // ---- Søgning ----
+
+    @GetMapping("/search")
+    public PageResponse<RestaurantResponse> search(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return restaurantService.Search(query, page, size);
     }
 }

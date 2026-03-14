@@ -1,10 +1,15 @@
 package com.dls.restaurantservice.Service;
 
+import com.dls.restaurantservice.DTO.PageResponse;
 import com.dls.restaurantservice.DTO.RestaurantRequest;
 import com.dls.restaurantservice.DTO.RestaurantResponse;
 import com.dls.restaurantservice.Entity.Restaurant;
 import com.dls.restaurantservice.Repository.RestaurantRepository;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,6 +64,39 @@ public class RestaurantService {
         return restaurantRepository.findByIsAvailable(true).stream()
                 .map(RestaurantResponse::new)
                 .collect(Collectors.toList());
+    }
+
+
+    // ---- Pagination metoder ----
+
+    public PageResponse<RestaurantResponse> GetAllRestaurantsPaged(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        Page<RestaurantResponse> result = restaurantRepository.findAll(pageable)
+                .map(RestaurantResponse::new);
+        return new PageResponse<>(result);
+    }
+
+    public PageResponse<RestaurantResponse> GetAvailableRestaurantsPaged(Boolean isAvailable, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        Page<RestaurantResponse> result = restaurantRepository.findByIsAvailable(isAvailable, pageable)
+                .map(RestaurantResponse::new);
+        return new PageResponse<>(result);
+    }
+
+    public PageResponse<RestaurantResponse> GetOpenRestaurantsPaged(Boolean isOpen, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        Page<RestaurantResponse> result = restaurantRepository.findByIsOpen(isOpen, pageable)
+                .map(RestaurantResponse::new);
+        return new PageResponse<>(result);
+    }
+
+    // ---- Søgning ----
+
+    public PageResponse<RestaurantResponse> Search(String query, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        Page<RestaurantResponse> result = restaurantRepository.search(query, pageable)
+                .map(RestaurantResponse::new);
+        return new PageResponse<>(result);
     }
 
     public RestaurantResponse AddRestaurant(RestaurantRequest restaurantRequest) {
