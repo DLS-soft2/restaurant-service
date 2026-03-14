@@ -25,6 +25,32 @@ public class RestaurantController {
         return restaurantService.GetAllRestaurants();
     }
 
+    @GetMapping("/available")
+    public List<RestaurantResponse> getAvailableRestaurants() {
+        return restaurantService.GetAvailableRestaurants();
+    }
+
+    @GetMapping("/name/{name}")
+    public RestaurantResponse getRestaurantByName(@PathVariable String name) {
+        return restaurantService.GetRestaurantByName(name);
+    }
+
+    @GetMapping("/available/{isAvailable}")
+    public List<RestaurantResponse> getRestaurantsByAvailability(@PathVariable Boolean isAvailable) {
+        return restaurantService.GetRestaurantsByAvailability(isAvailable);
+    }
+
+    @GetMapping("/open/{isOpen}")
+    public List<RestaurantResponse> getRestaurantsByOpenStatus(@PathVariable Boolean isOpen) {
+        return restaurantService.GetRestaurantsByOpenStatus(isOpen);
+    }
+
+    @GetMapping("/location/{location}")
+    public List<RestaurantResponse> getRestaurantsByLocation(@PathVariable String location) {
+        return restaurantService.GetRestaurantsByLocation(location);
+    }
+
+
     @GetMapping("/{id}")
     public RestaurantResponse getRestaurantById(@PathVariable Long id) {
         return restaurantService.GetRestaurantById(id);

@@ -2,6 +2,8 @@ package com.dls.restaurantservice;
 
 
 import com.dls.restaurantservice.Entity.Restaurant;
+import com.dls.restaurantservice.Entity.MenuItem;
+import com.dls.restaurantservice.Repository.MenuItemRepository;
 import com.dls.restaurantservice.Repository.RestaurantRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -10,9 +12,11 @@ import org.springframework.stereotype.Component;
 public class InitData implements CommandLineRunner {
 
     private final RestaurantRepository restaurantRepository;
+    private final MenuItemRepository menuItemRepository;
 
-    public InitData(RestaurantRepository restaurantRepository) {
+    public InitData(RestaurantRepository restaurantRepository, MenuItemRepository menuItemRepository) {
         this.restaurantRepository = restaurantRepository;
+        this.menuItemRepository = menuItemRepository;
     }
 
     @Override
@@ -43,6 +47,39 @@ public class InitData implements CommandLineRunner {
         restaurant2.setIsOpen(true);
         restaurant2.setIsAvailable(true);
         restaurantRepository.save(restaurant2);
+
+
+        // Menu items for restaurant 1
+        MenuItem menuItem1 = new MenuItem();
+        menuItem1.setName("Margherita");
+        menuItem1.setDescription("Klassisk pizza med tomatsauce, mozzarella og frisk basilikum.");
+        menuItem1.setPrice(79.99);
+        menuItem1.setRestaurant(restaurant1);
+        menuItemRepository.save(menuItem1);
+
+        MenuItem menuItem2 = new MenuItem();
+        menuItem2.setName("Pepperoni");
+        menuItem2.setDescription("Pizza med tomatsauce, mozzarella og masser af pepperoni.");
+        menuItem2.setPrice(89.99);
+        menuItem2.setRestaurant(restaurant1);
+        menuItemRepository.save(menuItem2);
+
+        // Menu items for restaurant 2
+        MenuItem menuItem3 = new MenuItem();
+        menuItem3.setName("Pad Thai");
+        menuItem3.setDescription("Klassisk thailandsk ret med risnudler, rejer, tofu, æg, jordnødder og en lækker tamarindsauce.");
+        menuItem3.setPrice(99.99);
+        menuItem3.setRestaurant(restaurant2);
+        menuItemRepository.save(menuItem3);
+
+        MenuItem menuItem4 = new MenuItem();
+        menuItem4.setName("Green Curry");
+        menuItem4.setDescription("Krydret thailandsk karryret med kokosmælk, grøn karrypasta, kylling, aubergine og basilikum.");
+        menuItem4.setPrice(109.99);
+        menuItem4.setRestaurant(restaurant2);
+        menuItemRepository.save(menuItem4);
+
+
 
         System.out.println("Initiel data gemt til databasen!");
     }

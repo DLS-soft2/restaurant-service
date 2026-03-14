@@ -55,6 +55,12 @@ public class RestaurantService {
                 .collect(Collectors.toList());
     }
 
+    public List<RestaurantResponse> GetAvailableRestaurants() {
+        return restaurantRepository.findByIsAvailable(true).stream()
+                .map(RestaurantResponse::new)
+                .collect(Collectors.toList());
+    }
+
     public RestaurantResponse AddRestaurant(RestaurantRequest restaurantRequest) {
         validateAddress(restaurantRequest.getAddress());
         validateDescription(restaurantRequest.getDescription());
