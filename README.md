@@ -7,6 +7,7 @@ Restaurant Profile Service for the food delivery platform. Manages restaurant da
 - **Framework:** Spring Boot 3.2 (Java 21)
 - **Database:** PostgreSQL (Spring Data JPA)
 - **GraphQL:** Spring for GraphQL
+- **API Docs:** Swagger UI (springdoc-openapi)
 - **Auth:** Keycloak (JWT via API Gateway) + shared RBAC library
 - **CI/CD:** GitHub Actions → GHCR
 
@@ -24,15 +25,31 @@ The service exposes both REST and GraphQL endpoints. REST is used for standard C
 | GET | `/api/restaurant/available/{isAvailable}` | Get restaurants by availability |
 | GET | `/api/restaurant/open/{isOpen}` | Get restaurants by open status |
 | GET | `/api/restaurant/location/{location}` | Get restaurants by location |
-| POST | `/api/restaurant` | Create restaurant |
-| PUT | `/api/restaurant/{id}` | Update restaurant |
-| DELETE | `/api/restaurant/{id}` | Delete restaurant |
+| GET | `/api/restaurant/paged` | List restaurants with pagination (`?page=0&size=10`) |
+| GET | `/api/restaurant/paged/available/{isAvailable}` | Paginated restaurants by availability |
+| GET | `/api/restaurant/paged/open/{isOpen}` | Paginated restaurants by open status |
+| GET | `/api/restaurant/search` | Search restaurants by query (`?query=pizza`) |
+| POST | `/api/restaurant/add` | Create restaurant |
+| PUT | `/api/restaurant/update/{id}` | Update restaurant |
+| DELETE | `/api/restaurant/delete/{id}` | Delete restaurant |
 | GET | `/api/menu-item` | List all menu items |
 | GET | `/api/menu-item/{id}` | Get menu item by ID |
 | GET | `/api/menu-item/restaurant/{restaurantId}` | Get menu items by restaurant |
-| POST | `/api/menu-item` | Create menu item |
-| PUT | `/api/menu-item/{id}` | Update menu item |
-| DELETE | `/api/menu-item/{id}` | Delete menu item |
+| POST | `/api/menu-item/add` | Create menu item |
+| PUT | `/api/menu-item/update/{id}` | Update menu item |
+| DELETE | `/api/menu-item/delete/{id}` | Delete menu item |
+
+### Error Handling
+
+The service returns standard HTTP status codes:
+
+| Status | Meaning |
+|--------|---------|
+| `200` | Success |
+| `400` | Invalid input (e.g. missing name, invalid email) |
+| `404` | Resource not found |
+| `409` | Conflict (e.g. duplicate email) |
+| `500` | Unexpected server error |
 
 ### GraphQL
 
@@ -64,21 +81,23 @@ restaurant-service/
 │   ├── main/
 │   │   ├── java/com/dls/restaurantservice/
 │   │   │   ├── Configuration/
-│   │   │   │   ├── CorsConfig.java         # CORS configuration
-│   │   │   │   └── SecurityConfig.java     # Security configuration
+│   │   │   │   ├── CorsConfig.java             # CORS configuration
+│   │   │   │   ├── SecurityConfig.java         # Security configuration
+│   │   │   │   └── GlobalExceptionHandler.java # Global error handling
 │   │   │   ├── Controller/
-│   │   │   │   ├── RestaurantController.java  # REST CRUD endpoints
-│   │   │   │   └── MenuItemController.java    # REST CRUD endpoints
+│   │   │   │   ├── RestaurantController.java   # REST CRUD endpoints
+│   │   │   │   └── MenuItemController.java     # REST CRUD endpoints
 │   │   │   ├── DTO/
 │   │   │   │   ├── RestaurantRequest.java
 │   │   │   │   ├── RestaurantResponse.java
 │   │   │   │   ├── MenuItemRequest.java
-│   │   │   │   └── MenuItemResponse.java
+│   │   │   │   ├── MenuItemResponse.java
+│   │   │   │   └── PageResponse.java           # Pagination wrapper
 │   │   │   ├── Entity/
-│   │   │   │   ├── Restaurant.java         # Database entity
-│   │   │   │   └── MenuItem.java           # Database entity
+│   │   │   │   ├── Restaurant.java             # Database entity
+│   │   │   │   └── MenuItem.java               # Database entity
 │   │   │   ├── GraphQL/
-│   │   │   │   └── RestaurantResolver.java # GraphQL queries and mutations
+│   │   │   │   └── RestaurantResolver.java     # GraphQL queries and mutations
 │   │   │   ├── Repository/
 │   │   │   │   ├── RestaurantRepository.java
 │   │   │   │   └── MenuItemRepository.java
@@ -88,15 +107,18 @@ restaurant-service/
 │   │   │   └── RestaurantServiceApplication.java
 │   │   └── resources/
 │   │       ├── graphql/
-│   │       │   └── schema.graphqls         # GraphQL schema definition
+│   │       │   └── schema.graphqls             # GraphQL schema definition
 │   │       └── application.properties
 │   └── test/
 │       ├── java/com/dls/restaurantservice/
+│       │   ├── RestaurantControllerTest.java
+│       │   ├── RestaurantGraphQLTest.java
+│       │   └── MenuItemControllerTest.java
 │       └── resources/
-│           └── application.properties      # H2 in-memory test database
-├── docker-compose.yaml                     # Local dev: PostgreSQL + service
-├── Dockerfile                              # Multi-stage production build
-└── pom.xml                                 # Dependencies and versioning
+│           └── application.properties          # H2 in-memory test database
+├── docker-compose.yaml                         # Local dev: PostgreSQL + service
+├── Dockerfile                                  # Multi-stage production build
+└── pom.xml                                     # Dependencies and versioning
 ```
 
 ## Development
@@ -115,8 +137,11 @@ Starts PostgreSQL and the service together:
 docker compose up --build
 ```
 
-- REST + Swagger UI: http://localhost:8002/swagger-ui.html
+- REST API: http://localhost:8002/api/restaurant
+- Swagger UI: http://localhost:8002/swagger-ui.html
+- API docs (JSON): http://localhost:8002/api-docs
 - GraphQL playground: http://localhost:8002/graphiql
+- Health check: http://localhost:8002/actuator/health
 
 ## Run Tests
 
