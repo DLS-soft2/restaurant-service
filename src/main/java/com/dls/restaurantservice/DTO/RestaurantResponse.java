@@ -1,6 +1,6 @@
 package com.dls.restaurantservice.DTO;
 
-import com.dls.restaurantservice.Entity.Restaurant;
+import com.dls.restaurantservice.Document.Restaurant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class RestaurantResponse {
-    private Long restaurantId;
+    private String restaurantId;
     private String name;
     private String address;
     private String phoneNumber;

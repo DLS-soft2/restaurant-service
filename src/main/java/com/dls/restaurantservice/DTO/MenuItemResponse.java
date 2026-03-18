@@ -1,6 +1,6 @@
 package com.dls.restaurantservice.DTO;
 
-import com.dls.restaurantservice.Entity.MenuItem;
+import com.dls.restaurantservice.Document.MenuItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,11 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class MenuItemResponse {
-    private Long menuItemId;
+    private String menuItemId;
     private String name;
     private String description;
     private Double price;
-    private Long restaurantId;
+    private String restaurantId;
 
     public MenuItemResponse(MenuItem menuItem) {
         this.menuItemId = menuItem.getMenuItemId();

@@ -2,6 +2,8 @@ package com.dls.restaurantservice;
 
 import com.dls.restaurantservice.DTO.RestaurantRequest;
 import com.dls.restaurantservice.DTO.RestaurantResponse;
+import com.dls.restaurantservice.Repository.MenuItemRepository;
+import com.dls.restaurantservice.Repository.RestaurantRepository;
 import com.dls.restaurantservice.Service.RestaurantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,12 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureGraphQlTester
 @ActiveProfiles("test")
-@Transactional
 @WithMockUser
 public class RestaurantGraphQLTest {
 
@@ -26,10 +26,19 @@ public class RestaurantGraphQLTest {
     @Autowired
     private RestaurantService restaurantService;
 
+    @Autowired
+    private RestaurantRepository restaurantRepository;
+
+    @Autowired
+    private MenuItemRepository menuItemRepository;
+
     private RestaurantRequest validRequest;
 
     @BeforeEach
     void setUp() {
+        // Rens databasen før hver test
+        menuItemRepository.deleteAll();
+        restaurantRepository.deleteAll();
 
         validRequest = new RestaurantRequest();
         validRequest.setName("GraphQL Restaurant");

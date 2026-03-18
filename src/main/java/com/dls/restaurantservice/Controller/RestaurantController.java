@@ -14,11 +14,9 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
-
     public RestaurantController(RestaurantService restaurantService) {
         this.restaurantService = restaurantService;
     }
-
 
     @GetMapping
     public List<RestaurantResponse> getAllRestaurants() {
@@ -50,9 +48,8 @@ public class RestaurantController {
         return restaurantService.GetRestaurantsByLocation(location);
     }
 
-
     @GetMapping("/{id}")
-    public RestaurantResponse getRestaurantById(@PathVariable Long id) {
+    public RestaurantResponse getRestaurantById(@PathVariable String id) {
         return restaurantService.GetRestaurantById(id);
     }
 
@@ -62,16 +59,16 @@ public class RestaurantController {
     }
 
     @PutMapping("/update/{id}")
-    public RestaurantResponse updateRestaurant(@PathVariable Long id, @RequestBody RestaurantRequest restaurantRequest) {
+    public RestaurantResponse updateRestaurant(@PathVariable String id, @RequestBody RestaurantRequest restaurantRequest) {
         return restaurantService.UpdateRestaurant(id, restaurantRequest);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteRestaurant(@PathVariable Long id) {
+    public void deleteRestaurant(@PathVariable String id) {
         restaurantService.DeleteRestaurant(id);
     }
 
-    // ---- Pagination endpoints ----
+    // ---- Pagination ----
 
     @GetMapping("/paged")
     public PageResponse<RestaurantResponse> getAllRestaurantsPaged(

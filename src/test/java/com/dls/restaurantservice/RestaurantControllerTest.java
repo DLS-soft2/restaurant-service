@@ -2,6 +2,7 @@ package com.dls.restaurantservice;
 
 import com.dls.restaurantservice.DTO.RestaurantRequest;
 import com.dls.restaurantservice.DTO.RestaurantResponse;
+import com.dls.restaurantservice.Repository.RestaurantRepository;
 import com.dls.restaurantservice.Service.RestaurantService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -22,7 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Transactional
 @WithMockUser
 public class RestaurantControllerTest {
 
@@ -31,6 +30,9 @@ public class RestaurantControllerTest {
 
     @Autowired
     private RestaurantService restaurantService;
+    @Autowired
+    private RestaurantRepository restaurantRepository;
+
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -39,6 +41,9 @@ public class RestaurantControllerTest {
 
     @BeforeEach
     void setUp() {
+        // Rens databasen før hver test
+        restaurantRepository.deleteAll();
+
         validRequest = new RestaurantRequest();
         validRequest.setName("Test Restaurant");
         validRequest.setAddress("Testgade 123");
@@ -70,12 +75,23 @@ public class RestaurantControllerTest {
     @Test
     void getRestaurantById_nonExistingId_returnsServerError() throws Exception {
         mockMvc.perform(get("/api/v1/restaurant/999999"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void getRestaurantByName_existingName_returnsRestaurant() throws Exception {
         restaurantService.AddRestaurant(validRequest);
+
+        RestaurantRequest req2 = new RestaurantRequest();
+        req2.setName("Different Name");
+        req2.setAddress("Testgade 123");
+        req2.setPhoneNumber("12345678");
+        req2.setEmail("other@restaurant.dk");
+        req2.setDescription("En god testrestaurant med lækker mad");
+        req2.setOpeningHours("Man-Fre: 10:00-22:00");
+        req2.setIsOpen(true);
+        req2.setIsAvailable(true);
+        restaurantService.AddRestaurant(req2);
 
         mockMvc.perform(get("/api/v1/restaurant/name/Test Restaurant"))
                 .andExpect(status().isOk())
@@ -128,7 +144,7 @@ public class RestaurantControllerTest {
         mockMvc.perform(post("/api/v1/restaurant/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validRequest)))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -138,7 +154,7 @@ public class RestaurantControllerTest {
         mockMvc.perform(post("/api/v1/restaurant/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validRequest)))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -160,7 +176,7 @@ public class RestaurantControllerTest {
         mockMvc.perform(put("/api/v1/restaurant/update/999999")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validRequest)))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -174,6 +190,6 @@ public class RestaurantControllerTest {
     @Test
     void deleteRestaurant_nonExistingId_returnsServerError() throws Exception {
         mockMvc.perform(delete("/api/v1/restaurant/delete/999999"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 }

@@ -1,8 +1,8 @@
 package com.dls.restaurantservice;
 
 
-import com.dls.restaurantservice.Entity.Restaurant;
-import com.dls.restaurantservice.Entity.MenuItem;
+import com.dls.restaurantservice.Document.Restaurant;
+import com.dls.restaurantservice.Document.MenuItem;
 import com.dls.restaurantservice.Repository.MenuItemRepository;
 import com.dls.restaurantservice.Repository.RestaurantRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -24,6 +24,13 @@ public class InitData implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("Applikationen starter!");
+
+
+        // Kun seed hvis databasen er tom
+        if (restaurantRepository.count() > 0) {
+            System.out.println("Data eksisterer allerede - springer over seed data.");
+            return;
+        }
 
         // Restaurant 1
         Restaurant restaurant1 = new Restaurant();

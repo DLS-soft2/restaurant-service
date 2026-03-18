@@ -3,7 +3,7 @@ package com.dls.restaurantservice.Service;
 import com.dls.restaurantservice.DTO.PageResponse;
 import com.dls.restaurantservice.DTO.RestaurantRequest;
 import com.dls.restaurantservice.DTO.RestaurantResponse;
-import com.dls.restaurantservice.Entity.Restaurant;
+import com.dls.restaurantservice.Document.Restaurant;
 import com.dls.restaurantservice.Repository.RestaurantRepository;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -30,7 +30,7 @@ public class RestaurantService {
                 .collect(Collectors.toList());
     }
 
-    public RestaurantResponse GetRestaurantById(Long restaurantId) {
+    public RestaurantResponse GetRestaurantById(String restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found with id: " + restaurantId));
         return new RestaurantResponse(restaurant);
@@ -66,8 +66,7 @@ public class RestaurantService {
                 .collect(Collectors.toList());
     }
 
-
-    // ---- Pagination metoder ----
+    // ---- Pagination ----
 
     public PageResponse<RestaurantResponse> GetAllRestaurantsPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
@@ -99,6 +98,8 @@ public class RestaurantService {
         return new PageResponse<>(result);
     }
 
+    // ---- CRUD ----
+
     public RestaurantResponse AddRestaurant(RestaurantRequest restaurantRequest) {
         validateAddress(restaurantRequest.getAddress());
         validateDescription(restaurantRequest.getDescription());
@@ -123,7 +124,7 @@ public class RestaurantService {
         return new RestaurantResponse(savedRestaurant);
     }
 
-    public RestaurantResponse UpdateRestaurant(Long id, @Valid RestaurantRequest restaurantRequest) {
+    public RestaurantResponse UpdateRestaurant(String id, @Valid RestaurantRequest restaurantRequest) {
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found with id: " + id));
 
@@ -149,7 +150,7 @@ public class RestaurantService {
         return new RestaurantResponse(updatedRestaurant);
     }
 
-    public void DeleteRestaurant(Long restaurantId) {
+    public void DeleteRestaurant(String restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found with id: " + restaurantId));
         restaurantRepository.delete(restaurant);
@@ -158,73 +159,57 @@ public class RestaurantService {
     /* Validation methods */
 
     private void validateName(String name) {
-        if (name == null || name.trim().isEmpty()) {
+        if (name == null || name.trim().isEmpty())
             throw new IllegalArgumentException("Restaurant name is required");
-        }
-        if (name.length() < 2 || name.length() > 100) {
+        if (name.length() < 2 || name.length() > 100)
             throw new IllegalArgumentException("Restaurant name must be between 2 and 100 characters");
-        }
     }
 
     private void validateAddress(String address) {
-        if (address == null || address.trim().isEmpty()) {
+        if (address == null || address.trim().isEmpty())
             throw new IllegalArgumentException("Address is required");
-        }
-        if (address.length() < 5 || address.length() > 200) {
+        if (address.length() < 5 || address.length() > 200)
             throw new IllegalArgumentException("Address must be between 5 and 200 characters");
-        }
     }
 
     private void validatePhoneNumber(String phoneNumber) {
-        if (phoneNumber != null && !phoneNumber.trim().isEmpty()) {
-            if (!phoneNumber.matches("\\+?[0-9]{7,15}")) {
-                throw new IllegalArgumentException("Phone number must be between 7 and 15 digits and can start with +");
-            }
-        }
+        if (phoneNumber != null && !phoneNumber.trim().isEmpty())
+            if (!phoneNumber.matches("\\+?[0-9]{7,15}"))
+                throw new IllegalArgumentException("Phone number must be between 7 and 15 digits");
     }
 
     private void validateEmail(String email) {
         if (email != null && !email.trim().isEmpty()) {
-            if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"))
                 throw new IllegalArgumentException("Email should be valid");
-            }
-            if (email.length() < 5 || email.length() > 70) {
+            if (email.length() < 5 || email.length() > 70)
                 throw new IllegalArgumentException("Email must be between 5 and 70 characters");
-            }
         }
     }
 
     private void validateOpeningHours(String openingHours) {
-        if (openingHours != null && !openingHours.trim().isEmpty()) {
-            if (openingHours.length() < 5 || openingHours.length() > 100) {
+        if (openingHours != null && !openingHours.trim().isEmpty())
+            if (openingHours.length() < 5 || openingHours.length() > 100)
                 throw new IllegalArgumentException("Opening hours must be between 5 and 100 characters");
-            }
-        }
     }
 
     private void validateDescription(String description) {
-        if (description != null && !description.trim().isEmpty()) {
-            if (description.length() < 10 || description.length() > 1000) {
+        if (description != null && !description.trim().isEmpty())
+            if (description.length() < 10 || description.length() > 1000)
                 throw new IllegalArgumentException("Description must be between 10 and 1000 characters");
-            }
-        }
     }
 
     private void validateIsOpen(String isOpen) {
-        if (isOpen == null || isOpen.trim().isEmpty()) {
+        if (isOpen == null || isOpen.trim().isEmpty())
             throw new IllegalArgumentException("Open status is required");
-        }
-        if (!isOpen.equalsIgnoreCase("true") && !isOpen.equalsIgnoreCase("false")) {
+        if (!isOpen.equalsIgnoreCase("true") && !isOpen.equalsIgnoreCase("false"))
             throw new IllegalArgumentException("Open status must be true or false");
-        }
     }
 
     private void validateIsAvailable(String isAvailable) {
-        if (isAvailable == null || isAvailable.trim().isEmpty()) {
+        if (isAvailable == null || isAvailable.trim().isEmpty())
             throw new IllegalArgumentException("Availability status is required");
-        }
-        if (!isAvailable.equalsIgnoreCase("true") && !isAvailable.equalsIgnoreCase("false")) {
+        if (!isAvailable.equalsIgnoreCase("true") && !isAvailable.equalsIgnoreCase("false"))
             throw new IllegalArgumentException("Availability status must be true or false");
-        }
     }
 }

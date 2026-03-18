@@ -4,6 +4,8 @@ import com.dls.restaurantservice.DTO.MenuItemRequest;
 import com.dls.restaurantservice.DTO.MenuItemResponse;
 import com.dls.restaurantservice.DTO.RestaurantRequest;
 import com.dls.restaurantservice.DTO.RestaurantResponse;
+import com.dls.restaurantservice.Repository.MenuItemRepository;
+import com.dls.restaurantservice.Repository.RestaurantRepository;
 import com.dls.restaurantservice.Service.MenuItemService;
 import com.dls.restaurantservice.Service.RestaurantService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -25,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Transactional
 @WithMockUser
 public class MenuItemControllerTest {
 
@@ -39,6 +39,12 @@ public class MenuItemControllerTest {
     private RestaurantService restaurantService;
 
     @Autowired
+    private MenuItemRepository menuItemRepository;
+
+    @Autowired
+    private RestaurantRepository restaurantRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private RestaurantResponse createdRestaurant;
@@ -46,7 +52,10 @@ public class MenuItemControllerTest {
 
     @BeforeEach
     void setUp() {
-        // Opret en restaurant som menu items kan tilknyttes
+        // Rens databasen før hver test
+        menuItemRepository.deleteAll();
+        restaurantRepository.deleteAll();
+
         RestaurantRequest restaurantRequest = new RestaurantRequest();
         restaurantRequest.setName("Test Restaurant");
         restaurantRequest.setAddress("Testgade 123");
@@ -58,7 +67,6 @@ public class MenuItemControllerTest {
         restaurantRequest.setIsAvailable(true);
         createdRestaurant = restaurantService.AddRestaurant(restaurantRequest);
 
-        // Valid menu item request
         validMenuItemRequest = new MenuItemRequest();
         validMenuItemRequest.setName("Margherita");
         validMenuItemRequest.setDescription("Klassisk pizza med tomatsauce og mozzarella.");
@@ -66,16 +74,12 @@ public class MenuItemControllerTest {
         validMenuItemRequest.setRestaurantId(createdRestaurant.getRestaurantId());
     }
 
-    // ---- GET ALL ----
-
     @Test
     void getAllMenuItems_returnsOk() throws Exception {
         mockMvc.perform(get("/api/v1/menu-item"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
-
-    // ---- GET BY ID ----
 
     @Test
     void getMenuItemById_existingId_returnsMenuItem() throws Exception {
@@ -88,12 +92,10 @@ public class MenuItemControllerTest {
     }
 
     @Test
-    void getMenuItemById_nonExistingId_returnsServerError() throws Exception {
-        mockMvc.perform(get("/api/v1/menu-item/999999"))
-                .andExpect(status().is5xxServerError());
+    void getMenuItemById_nonExistingId_returnsNotFound() throws Exception {
+        mockMvc.perform(get("/api/v1/menu-item/nonexistentid"))
+                .andExpect(status().is4xxClientError());
     }
-
-    // ---- GET BY RESTAURANT ----
 
     @Test
     void getMenuItemsByRestaurantId_existingRestaurant_returnsMenuItems() throws Exception {
@@ -106,12 +108,10 @@ public class MenuItemControllerTest {
     }
 
     @Test
-    void getMenuItemsByRestaurantId_nonExistingRestaurant_returnsServerError() throws Exception {
-        mockMvc.perform(get("/api/v1/menu-item/restaurant/999999"))
-                .andExpect(status().is5xxServerError());
+    void getMenuItemsByRestaurantId_nonExistingRestaurant_returnsNotFound() throws Exception {
+        mockMvc.perform(get("/api/v1/menu-item/restaurant/nonexistentid"))
+                .andExpect(status().is4xxClientError());
     }
-
-    // ---- POST ----
 
     @Test
     void addMenuItem_validRequest_returnsCreatedMenuItem() throws Exception {
@@ -145,16 +145,14 @@ public class MenuItemControllerTest {
     }
 
     @Test
-    void addMenuItem_nonExistingRestaurant_returnsServerError() throws Exception {
-        validMenuItemRequest.setRestaurantId(999999L);
+    void addMenuItem_nonExistingRestaurant_returnsNotFound() throws Exception {
+        validMenuItemRequest.setRestaurantId("nonexistentid"); // String i stedet for 999999L
 
         mockMvc.perform(post("/api/v1/menu-item/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validMenuItemRequest)))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().is4xxClientError());
     }
-
-    // ---- PUT ----
 
     @Test
     void updateMenuItem_validRequest_returnsUpdatedMenuItem() throws Exception {
@@ -172,14 +170,12 @@ public class MenuItemControllerTest {
     }
 
     @Test
-    void updateMenuItem_nonExistingId_returnsServerError() throws Exception {
-        mockMvc.perform(put("/api/v1/menu-item/update/999999")
+    void updateMenuItem_nonExistingId_returnsNotFound() throws Exception {
+        mockMvc.perform(put("/api/v1/menu-item/update/nonexistentid")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validMenuItemRequest)))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().is4xxClientError());
     }
-
-    // ---- DELETE ----
 
     @Test
     void deleteMenuItem_existingId_returnsOk() throws Exception {
@@ -190,8 +186,8 @@ public class MenuItemControllerTest {
     }
 
     @Test
-    void deleteMenuItem_nonExistingId_returnsServerError() throws Exception {
-        mockMvc.perform(delete("/api/v1/menu-item/delete/999999"))
-                .andExpect(status().is5xxServerError());
+    void deleteMenuItem_nonExistingId_returnsNotFound() throws Exception {
+        mockMvc.perform(delete("/api/v1/menu-item/delete/nonexistentid"))
+                .andExpect(status().is4xxClientError());
     }
 }

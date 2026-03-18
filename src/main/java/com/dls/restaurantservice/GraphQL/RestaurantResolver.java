@@ -25,14 +25,15 @@ public class RestaurantResolver {
         this.menuItemService = menuItemService;
     }
 
-    // Queries
+    // ---- Queries ----
+
     @QueryMapping
     public List<RestaurantResponse> getAllRestaurants() {
         return restaurantService.GetAllRestaurants();
     }
 
     @QueryMapping
-    public RestaurantResponse getRestaurantById(@Argument Long restaurantId) {
+    public RestaurantResponse getRestaurantById(@Argument String restaurantId) {
         return restaurantService.GetRestaurantById(restaurantId);
     }
 
@@ -52,16 +53,17 @@ public class RestaurantResolver {
     }
 
     @QueryMapping
-    public List<MenuItemResponse> getMenuItemsByRestaurantId(@Argument Long restaurantId) {
+    public List<MenuItemResponse> getMenuItemsByRestaurantId(@Argument String restaurantId) {
         return menuItemService.getMenuItemsByRestaurantId(restaurantId);
     }
 
     @QueryMapping
-    public MenuItemResponse getMenuItemById(@Argument Long menuItemId) {
+    public MenuItemResponse getMenuItemById(@Argument String menuItemId) {
         return menuItemService.getMenuItemById(menuItemId);
     }
 
-    // Mutations
+    // ---- Mutations ----
+
     @MutationMapping
     public RestaurantResponse addRestaurant(
             @Argument String name,
@@ -87,7 +89,7 @@ public class RestaurantResolver {
 
     @MutationMapping
     public RestaurantResponse updateRestaurant(
-            @Argument Long restaurantId,
+            @Argument String restaurantId,
             @Argument String name,
             @Argument String address,
             @Argument String phoneNumber,
@@ -110,7 +112,7 @@ public class RestaurantResolver {
     }
 
     @MutationMapping
-    public Boolean deleteRestaurant(@Argument Long restaurantId) {
+    public Boolean deleteRestaurant(@Argument String restaurantId) {
         restaurantService.DeleteRestaurant(restaurantId);
         return true;
     }
@@ -120,7 +122,7 @@ public class RestaurantResolver {
             @Argument String name,
             @Argument String description,
             @Argument Double price,
-            @Argument Long restaurantId) {
+            @Argument String restaurantId) {
 
         MenuItemRequest request = new MenuItemRequest();
         request.setName(name);
@@ -132,11 +134,11 @@ public class RestaurantResolver {
 
     @MutationMapping
     public MenuItemResponse updateMenuItem(
-            @Argument Long menuItemId,
+            @Argument String menuItemId,
             @Argument String name,
             @Argument String description,
             @Argument Double price,
-            @Argument Long restaurantId) {
+            @Argument String restaurantId) {
 
         MenuItemRequest request = new MenuItemRequest();
         request.setName(name);
@@ -147,7 +149,7 @@ public class RestaurantResolver {
     }
 
     @MutationMapping
-    public Boolean deleteMenuItem(@Argument Long menuItemId) {
+    public Boolean deleteMenuItem(@Argument String menuItemId) {
         menuItemService.deleteMenuItem(menuItemId);
         return true;
     }
