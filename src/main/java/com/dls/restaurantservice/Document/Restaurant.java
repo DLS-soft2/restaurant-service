@@ -27,6 +27,7 @@ public class Restaurant {
     private String openingHours;
     private Boolean isOpen;
     private Boolean isAvailable;
+    private Integer estimatedPrepTimeMinutes = 15;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
