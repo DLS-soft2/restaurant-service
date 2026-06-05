@@ -42,6 +42,7 @@ public class InitData implements CommandLineRunner {
         restaurant1.setOpeningHours("Mandag-Fredag: 11:00-22:00, Lørdag-Søndag: 12:00-23:00");
         restaurant1.setIsOpen(true);
         restaurant1.setIsAvailable(true);
+        restaurant1.setEstimatedPrepTimeMinutes(20);
         restaurantRepository.save(restaurant1);
 
 
@@ -55,6 +56,7 @@ public class InitData implements CommandLineRunner {
         restaurant2.setOpeningHours("Mandag-Fredag: 11:00-21:00, Lørdag-Søndag: 12:00-22:00");
         restaurant2.setIsOpen(true);
         restaurant2.setIsAvailable(true);
+        restaurant2.setEstimatedPrepTimeMinutes(25);
         restaurantRepository.save(restaurant2);
 
 
