@@ -11,7 +11,7 @@
 
     <groupId>com.dls</groupId>
     <artifactId>restaurant-service</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <name>restaurant-service</name>
     <description>Restaurant Service for the DLS food delivery platform</description>
 
@@ -55,7 +55,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.17.0</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.kafka</groupId>
