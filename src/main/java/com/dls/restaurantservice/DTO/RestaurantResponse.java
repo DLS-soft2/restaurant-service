@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RestaurantResponse {
     private String restaurantId;
+    private String externalId;
     private String name;
     private String address;
     private String phoneNumber;
@@ -21,6 +22,7 @@ public class RestaurantResponse {
 
     public RestaurantResponse(Restaurant restaurant) {
         this.restaurantId = restaurant.getRestaurantId();
+        this.externalId = restaurant.getExternalId();
         this.name = restaurant.getName();
         this.address = restaurant.getAddress();
         this.phoneNumber = restaurant.getPhoneNumber();

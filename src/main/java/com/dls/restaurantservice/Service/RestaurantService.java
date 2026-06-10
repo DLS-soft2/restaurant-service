@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,6 +112,7 @@ public class RestaurantService {
         validatePhoneNumber(restaurantRequest.getPhoneNumber());
 
         Restaurant restaurant = new Restaurant();
+        restaurant.setExternalId(UUID.randomUUID().toString());
         restaurant.setName(restaurantRequest.getName());
         restaurant.setAddress(restaurantRequest.getAddress());
         restaurant.setPhoneNumber(restaurantRequest.getPhoneNumber());

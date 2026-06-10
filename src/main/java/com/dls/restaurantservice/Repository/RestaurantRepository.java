@@ -13,6 +13,8 @@ import java.util.Optional;
 @Repository
 public interface RestaurantRepository extends MongoRepository<Restaurant, String> {
 
+    Optional<Restaurant> findByExternalId(String externalId);
+
     Optional<Restaurant> findByNameIgnoreCase(String name);
 
     List<Restaurant> findByIsAvailable(Boolean isAvailable);
