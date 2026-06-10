@@ -14,7 +14,7 @@ services:
   restaurant-service:
     build: .
     ports:
-      - "8002:8002"
+      - "8002:8000"
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://db:27017/restaurant_db
     depends_on:
