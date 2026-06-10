@@ -43,6 +43,7 @@ public class InitData implements CommandLineRunner {
         restaurant1.setIsOpen(true);
         restaurant1.setIsAvailable(true);
         restaurant1.setEstimatedPrepTimeMinutes(20);
+        restaurant1.setExternalId("550e8400-e29b-41d4-a716-446655440001");
         restaurantRepository.save(restaurant1);
 
 
@@ -57,6 +58,7 @@ public class InitData implements CommandLineRunner {
         restaurant2.setIsOpen(true);
         restaurant2.setIsAvailable(true);
         restaurant2.setEstimatedPrepTimeMinutes(25);
+        restaurant2.setExternalId("550e8400-e29b-41d4-a716-446655440002");
         restaurantRepository.save(restaurant2);
 
 

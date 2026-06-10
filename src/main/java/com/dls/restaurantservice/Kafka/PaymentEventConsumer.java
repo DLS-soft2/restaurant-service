@@ -77,7 +77,7 @@ public class PaymentEventConsumer {
         }
 
         String restaurantId = event.getRestaurantId();
-        Optional<Restaurant> restaurantOpt = restaurantRepository.findById(
+        Optional<Restaurant> restaurantOpt = restaurantRepository.findByExternalId(
                 restaurantId != null ? restaurantId : "");
 
         if (restaurantOpt.isEmpty()) {
@@ -91,7 +91,7 @@ public class PaymentEventConsumer {
                 ? restaurant.getEstimatedPrepTimeMinutes() : 15;
 
         RestaurantAcceptedEvent accepted = new RestaurantAcceptedEvent(
-                event.getOrderId(), event.getCustomerId(), prepTime);
+                event.getOrderId(), event.getCustomerId(), restaurantId, prepTime);
 
         kafkaTemplate.send(restaurantsTopic, event.getOrderId(), accepted);
         log.info("Published RestaurantAccepted for order_id={}", event.getOrderId());
