@@ -23,6 +23,9 @@ public class RestaurantAcceptedEvent {
     @JsonProperty("customer_id")
     private String customerId;
 
+    @JsonProperty("restaurant_id")
+    private String restaurantId;
+
     @JsonProperty("estimated_prep_time")
     private Integer estimatedPrepTime;
 
@@ -31,9 +34,10 @@ public class RestaurantAcceptedEvent {
 
     public RestaurantAcceptedEvent() {}
 
-    public RestaurantAcceptedEvent(String orderId, String customerId, Integer estimatedPrepTime) {
+    public RestaurantAcceptedEvent(String orderId, String customerId, String restaurantId, Integer estimatedPrepTime) {
         this.orderId = orderId;
         this.customerId = customerId;
+        this.restaurantId = restaurantId;
         this.estimatedPrepTime = estimatedPrepTime;
     }
 }

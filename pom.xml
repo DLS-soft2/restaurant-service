@@ -11,7 +11,7 @@
 
     <groupId>com.dls</groupId>
     <artifactId>restaurant-service</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <name>restaurant-service</name>
     <description>Restaurant Service for the DLS food delivery platform</description>
 
