@@ -55,7 +55,7 @@ public class RestaurantControllerTest {
 
     @Test
     void getAllRestaurants_returnsOk() throws Exception {
-        mockMvc.perform(get("/api/v1/restaurants"))
+        mockMvc.perform(get("/api/v2/restaurants"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -64,7 +64,7 @@ public class RestaurantControllerTest {
     void getRestaurantById_existingId_returnsRestaurant() throws Exception {
         RestaurantResponse created = restaurantService.AddRestaurant(validRequest);
 
-        mockMvc.perform(get("/api/v1/restaurants/" + created.getRestaurantId()))
+        mockMvc.perform(get("/api/v2/restaurants/" + created.getRestaurantId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Test Restaurant"))
                 .andExpect(jsonPath("$.email").value("test@restaurant.dk"));
@@ -72,7 +72,7 @@ public class RestaurantControllerTest {
 
     @Test
     void getRestaurantById_nonExistingId_returnsServerError() throws Exception {
-        mockMvc.perform(get("/api/v1/restaurants/999999"))
+        mockMvc.perform(get("/api/v2/restaurants/999999"))
                 .andExpect(status().isNotFound());
     }
 
@@ -91,7 +91,7 @@ public class RestaurantControllerTest {
         req2.setIsAvailable(true);
         restaurantService.AddRestaurant(req2);
 
-        mockMvc.perform(get("/api/v1/restaurants/name/Test Restaurant"))
+        mockMvc.perform(get("/api/v2/restaurants/name/Test Restaurant"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Test Restaurant"));
     }
@@ -100,7 +100,7 @@ public class RestaurantControllerTest {
     void getRestaurantsByAvailability_returnsFilteredList() throws Exception {
         restaurantService.AddRestaurant(validRequest);
 
-        mockMvc.perform(get("/api/v1/restaurants/available/true"))
+        mockMvc.perform(get("/api/v2/restaurants/available/true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].isAvailable", everyItem(is(true))));
     }
@@ -109,7 +109,7 @@ public class RestaurantControllerTest {
     void getRestaurantsByOpenStatus_returnsFilteredList() throws Exception {
         restaurantService.AddRestaurant(validRequest);
 
-        mockMvc.perform(get("/api/v1/restaurants/open/true"))
+        mockMvc.perform(get("/api/v2/restaurants/open/true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].isOpen", everyItem(is(true))));
     }
@@ -118,7 +118,7 @@ public class RestaurantControllerTest {
     void getRestaurantsByLocation_returnsMatchingRestaurants() throws Exception {
         restaurantService.AddRestaurant(validRequest);
 
-        mockMvc.perform(get("/api/v1/restaurants/location/Testgade"))
+        mockMvc.perform(get("/api/v2/restaurants/location/Testgade"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))));
     }
@@ -127,7 +127,7 @@ public class RestaurantControllerTest {
     void addRestaurant_validRequest_returnsCreatedRestaurant() throws Exception {
         validRequest.setEmail("unique@restaurant.dk");
 
-        mockMvc.perform(post("/api/v1/restaurants")
+        mockMvc.perform(post("/api/v2/restaurants")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isOk())
@@ -139,7 +139,7 @@ public class RestaurantControllerTest {
     void addRestaurant_missingName_returnsServerError() throws Exception {
         validRequest.setName(null);
 
-        mockMvc.perform(post("/api/v1/restaurants")
+        mockMvc.perform(post("/api/v2/restaurants")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isBadRequest());
@@ -149,7 +149,7 @@ public class RestaurantControllerTest {
     void addRestaurant_invalidEmail_returnsServerError() throws Exception {
         validRequest.setEmail("ikke-en-email");
 
-        mockMvc.perform(post("/api/v1/restaurants")
+        mockMvc.perform(post("/api/v2/restaurants")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isBadRequest());
@@ -162,7 +162,7 @@ public class RestaurantControllerTest {
         validRequest.setName("Opdateret Restaurant");
         validRequest.setEmail("opdateret@restaurant.dk");
 
-        mockMvc.perform(put("/api/v1/restaurants/" + created.getRestaurantId())
+        mockMvc.perform(put("/api/v2/restaurants/" + created.getRestaurantId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isOk())
@@ -171,7 +171,7 @@ public class RestaurantControllerTest {
 
     @Test
     void updateRestaurant_nonExistingId_returnsServerError() throws Exception {
-        mockMvc.perform(put("/api/v1/restaurants/999999")
+        mockMvc.perform(put("/api/v2/restaurants/999999")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isNotFound());
@@ -181,13 +181,13 @@ public class RestaurantControllerTest {
     void deleteRestaurant_existingId_returnsOk() throws Exception {
         RestaurantResponse created = restaurantService.AddRestaurant(validRequest);
 
-        mockMvc.perform(delete("/api/v1/restaurants/" + created.getRestaurantId()))
+        mockMvc.perform(delete("/api/v2/restaurants/" + created.getRestaurantId()))
                 .andExpect(status().isOk());
     }
 
     @Test
     void deleteRestaurant_nonExistingId_returnsServerError() throws Exception {
-        mockMvc.perform(delete("/api/v1/restaurants/999999"))
+        mockMvc.perform(delete("/api/v2/restaurants/999999"))
                 .andExpect(status().isNotFound());
     }
 }
