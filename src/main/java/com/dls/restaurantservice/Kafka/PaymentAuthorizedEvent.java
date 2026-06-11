@@ -31,6 +31,9 @@ public class PaymentAuthorizedEvent {
     @JsonProperty("amount")
     private Double amount;
 
+    @JsonProperty("delivery_address")
+    private String deliveryAddress;
+
     @JsonProperty("timestamp")
     private String timestamp;
 }

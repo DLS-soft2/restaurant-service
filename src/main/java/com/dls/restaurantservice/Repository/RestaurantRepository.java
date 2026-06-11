@@ -15,6 +15,8 @@ public interface RestaurantRepository extends MongoRepository<Restaurant, String
 
     Optional<Restaurant> findByNameIgnoreCase(String name);
 
+    Optional<Restaurant> findByKeycloakId(String keycloakId);
+
     List<Restaurant> findByIsAvailable(Boolean isAvailable);
 
     List<Restaurant> findByIsOpen(Boolean isOpen);

@@ -29,15 +29,24 @@ public class RestaurantAcceptedEvent {
     @JsonProperty("estimated_prep_time")
     private Integer estimatedPrepTime;
 
+    @JsonProperty("delivery_address")
+    private String deliveryAddress;
+
+    @JsonProperty("restaurant_address")
+    private String restaurantAddress;
+
     @JsonProperty("timestamp")
     private String timestamp = Instant.now().toString();
 
     public RestaurantAcceptedEvent() {}
 
-    public RestaurantAcceptedEvent(String orderId, String customerId, String restaurantId, Integer estimatedPrepTime) {
+    public RestaurantAcceptedEvent(String orderId, String customerId, String restaurantId,
+                                   Integer estimatedPrepTime, String deliveryAddress, String restaurantAddress) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.restaurantId = restaurantId;
         this.estimatedPrepTime = estimatedPrepTime;
+        this.deliveryAddress = deliveryAddress;
+        this.restaurantAddress = restaurantAddress;
     }
 }

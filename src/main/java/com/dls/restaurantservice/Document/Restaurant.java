@@ -23,6 +23,9 @@ public class Restaurant {
     @Indexed(unique = true)
     private String email;
 
+    @Indexed(unique = true, sparse = true)
+    private String keycloakId;
+
     private String description;
     private String openingHours;
     private Boolean isOpen;

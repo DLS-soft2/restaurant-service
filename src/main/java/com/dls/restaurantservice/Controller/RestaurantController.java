@@ -6,6 +6,8 @@ import com.dls.restaurantservice.DTO.PageResponse;
 import com.dls.restaurantservice.DTO.RestaurantRequest;
 import com.dls.restaurantservice.DTO.RestaurantResponse;
 import com.dls.restaurantservice.Service.RestaurantService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,6 +58,13 @@ public class RestaurantController {
         return restaurantService.GetRestaurantsByLocation(location);
     }
 
+    @GetMapping("/me")
+    @RequirePermission(Permission.RESTAURANTS_READ)
+    public ResponseEntity<RestaurantResponse> getCurrentRestaurant(HttpServletRequest request) {
+        String keycloakId = request.getHeader("X-User-Id");
+        return ResponseEntity.ok(restaurantService.GetRestaurantByKeycloakId(keycloakId));
+    }
+
     @GetMapping("/{id}")
     @RequirePermission(Permission.RESTAURANTS_READ)
     public RestaurantResponse getRestaurantById(@PathVariable String id) {
@@ -64,8 +73,9 @@ public class RestaurantController {
 
     @PostMapping
     @RequirePermission(Permission.RESTAURANTS_CREATE)
-    public RestaurantResponse addRestaurant(@RequestBody RestaurantRequest restaurantRequest) {
-        return restaurantService.AddRestaurant(restaurantRequest);
+    public RestaurantResponse addRestaurant(@RequestBody RestaurantRequest restaurantRequest, HttpServletRequest request) {
+        String keycloakId = request.getHeader("X-User-Id");
+        return restaurantService.AddRestaurant(restaurantRequest, keycloakId);
     }
 
     @PutMapping("/{id}")

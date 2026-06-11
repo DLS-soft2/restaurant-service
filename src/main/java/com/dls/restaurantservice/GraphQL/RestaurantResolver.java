@@ -84,7 +84,7 @@ public class RestaurantResolver {
         request.setOpeningHours(openingHours);
         request.setIsOpen(isOpen);
         request.setIsAvailable(isAvailable);
-        return restaurantService.AddRestaurant(request);
+        return restaurantService.AddRestaurant(request, null);
     }
 
     @MutationMapping

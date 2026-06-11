@@ -91,7 +91,8 @@ public class PaymentEventConsumer {
                 ? restaurant.getEstimatedPrepTimeMinutes() : 15;
 
         RestaurantAcceptedEvent accepted = new RestaurantAcceptedEvent(
-                event.getOrderId(), event.getCustomerId(), restaurantId, prepTime);
+                event.getOrderId(), event.getCustomerId(), restaurantId, prepTime,
+                event.getDeliveryAddress(), restaurant.getAddress());
 
         kafkaTemplate.send(restaurantsTopic, event.getOrderId(), accepted);
         log.info("Published RestaurantAccepted for order_id={}", event.getOrderId());

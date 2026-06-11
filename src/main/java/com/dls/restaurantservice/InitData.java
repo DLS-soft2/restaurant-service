@@ -45,6 +45,7 @@ public class InitData implements CommandLineRunner {
         restaurant1.setIsAvailable(true);
         restaurant1.setEstimatedPrepTimeMinutes(20);
         restaurant1.setRestaurantId("550e8400-e29b-41d4-a716-446655440001");
+        restaurant1.setKeycloakId("aaaaaaaa-1111-2222-3333-000000000003");
         restaurantRepository.save(restaurant1);
 
 

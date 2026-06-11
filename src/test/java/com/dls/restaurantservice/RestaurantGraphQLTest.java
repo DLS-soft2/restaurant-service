@@ -68,7 +68,7 @@ public class RestaurantGraphQLTest {
 
     @Test
     void getRestaurantById_existingId_returnsRestaurant() {
-        RestaurantResponse created = restaurantService.AddRestaurant(validRequest);
+        RestaurantResponse created = restaurantService.AddRestaurant(validRequest, "kc-test-user");
 
         graphQlTester.document("""
                 query {
@@ -87,7 +87,7 @@ public class RestaurantGraphQLTest {
 
     @Test
     void getRestaurantByName_existingName_returnsRestaurant() {
-        restaurantService.AddRestaurant(validRequest);
+        restaurantService.AddRestaurant(validRequest, "kc-test-user");
 
         graphQlTester.document("""
                 query {
@@ -104,7 +104,7 @@ public class RestaurantGraphQLTest {
 
     @Test
     void getRestaurantsByAvailability_returnsFilteredList() {
-        restaurantService.AddRestaurant(validRequest);
+        restaurantService.AddRestaurant(validRequest, "kc-test-user");
 
         graphQlTester.document("""
                 query {
@@ -147,7 +147,7 @@ public class RestaurantGraphQLTest {
 
     @Test
     void updateRestaurant_validInput_returnsUpdatedRestaurant() {
-        RestaurantResponse created = restaurantService.AddRestaurant(validRequest);
+        RestaurantResponse created = restaurantService.AddRestaurant(validRequest, "kc-test-user");
 
         graphQlTester.document("""
                 mutation {
@@ -174,7 +174,7 @@ public class RestaurantGraphQLTest {
 
     @Test
     void deleteRestaurant_existingId_returnsTrue() {
-        RestaurantResponse created = restaurantService.AddRestaurant(validRequest);
+        RestaurantResponse created = restaurantService.AddRestaurant(validRequest, "kc-test-user");
 
         graphQlTester.document("""
                 mutation {

@@ -62,7 +62,7 @@ public class RestaurantControllerTest {
 
     @Test
     void getRestaurantById_existingId_returnsRestaurant() throws Exception {
-        RestaurantResponse created = restaurantService.AddRestaurant(validRequest);
+        RestaurantResponse created = restaurantService.AddRestaurant(validRequest, "kc-test-user");
 
         mockMvc.perform(get("/api/v2/restaurants/" + created.getRestaurantId()))
                 .andExpect(status().isOk())
@@ -78,7 +78,7 @@ public class RestaurantControllerTest {
 
     @Test
     void getRestaurantByName_existingName_returnsRestaurant() throws Exception {
-        restaurantService.AddRestaurant(validRequest);
+        restaurantService.AddRestaurant(validRequest, "kc-test-user");
 
         RestaurantRequest req2 = new RestaurantRequest();
         req2.setName("Different Name");
@@ -89,7 +89,7 @@ public class RestaurantControllerTest {
         req2.setOpeningHours("Man-Fre: 10:00-22:00");
         req2.setIsOpen(true);
         req2.setIsAvailable(true);
-        restaurantService.AddRestaurant(req2);
+        restaurantService.AddRestaurant(req2, "kc-test-user");
 
         mockMvc.perform(get("/api/v2/restaurants/name/Test Restaurant"))
                 .andExpect(status().isOk())
@@ -98,7 +98,7 @@ public class RestaurantControllerTest {
 
     @Test
     void getRestaurantsByAvailability_returnsFilteredList() throws Exception {
-        restaurantService.AddRestaurant(validRequest);
+        restaurantService.AddRestaurant(validRequest, "kc-test-user");
 
         mockMvc.perform(get("/api/v2/restaurants/available/true"))
                 .andExpect(status().isOk())
@@ -107,7 +107,7 @@ public class RestaurantControllerTest {
 
     @Test
     void getRestaurantsByOpenStatus_returnsFilteredList() throws Exception {
-        restaurantService.AddRestaurant(validRequest);
+        restaurantService.AddRestaurant(validRequest, "kc-test-user");
 
         mockMvc.perform(get("/api/v2/restaurants/open/true"))
                 .andExpect(status().isOk())
@@ -116,7 +116,7 @@ public class RestaurantControllerTest {
 
     @Test
     void getRestaurantsByLocation_returnsMatchingRestaurants() throws Exception {
-        restaurantService.AddRestaurant(validRequest);
+        restaurantService.AddRestaurant(validRequest, "kc-test-user");
 
         mockMvc.perform(get("/api/v2/restaurants/location/Testgade"))
                 .andExpect(status().isOk())
@@ -157,7 +157,7 @@ public class RestaurantControllerTest {
 
     @Test
     void updateRestaurant_validRequest_returnsUpdatedRestaurant() throws Exception {
-        RestaurantResponse created = restaurantService.AddRestaurant(validRequest);
+        RestaurantResponse created = restaurantService.AddRestaurant(validRequest, "kc-test-user");
 
         validRequest.setName("Opdateret Restaurant");
         validRequest.setEmail("opdateret@restaurant.dk");
@@ -179,7 +179,7 @@ public class RestaurantControllerTest {
 
     @Test
     void deleteRestaurant_existingId_returnsOk() throws Exception {
-        RestaurantResponse created = restaurantService.AddRestaurant(validRequest);
+        RestaurantResponse created = restaurantService.AddRestaurant(validRequest, "kc-test-user");
 
         mockMvc.perform(delete("/api/v2/restaurants/" + created.getRestaurantId()))
                 .andExpect(status().isOk());

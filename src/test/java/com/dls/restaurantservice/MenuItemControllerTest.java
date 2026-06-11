@@ -63,7 +63,7 @@ public class MenuItemControllerTest {
         restaurantRequest.setOpeningHours("Man-Fre: 10:00-22:00");
         restaurantRequest.setIsOpen(true);
         restaurantRequest.setIsAvailable(true);
-        createdRestaurant = restaurantService.AddRestaurant(restaurantRequest);
+        createdRestaurant = restaurantService.AddRestaurant(restaurantRequest, "kc-test-user");
 
         validMenuItemRequest = new MenuItemRequest();
         validMenuItemRequest.setName("Margherita");

@@ -37,6 +37,12 @@ public class RestaurantService {
         return new RestaurantResponse(restaurant);
     }
 
+    public RestaurantResponse GetRestaurantByKeycloakId(String keycloakId) {
+        Restaurant restaurant = restaurantRepository.findByKeycloakId(keycloakId)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found for keycloakId: " + keycloakId));
+        return new RestaurantResponse(restaurant);
+    }
+
     public RestaurantResponse GetRestaurantByName(String name) {
         Restaurant restaurant = restaurantRepository.findByNameIgnoreCase(name)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found with name: " + name));
@@ -101,7 +107,7 @@ public class RestaurantService {
 
     // ---- CRUD ----
 
-    public RestaurantResponse AddRestaurant(RestaurantRequest restaurantRequest) {
+    public RestaurantResponse AddRestaurant(RestaurantRequest restaurantRequest, String keycloakId) {
         validateAddress(restaurantRequest.getAddress());
         validateDescription(restaurantRequest.getDescription());
         validateEmail(restaurantRequest.getEmail());
@@ -113,6 +119,7 @@ public class RestaurantService {
 
         Restaurant restaurant = new Restaurant();
         restaurant.setRestaurantId(UUID.randomUUID().toString());
+        restaurant.setKeycloakId(keycloakId);
         restaurant.setName(restaurantRequest.getName());
         restaurant.setAddress(restaurantRequest.getAddress());
         restaurant.setPhoneNumber(restaurantRequest.getPhoneNumber());

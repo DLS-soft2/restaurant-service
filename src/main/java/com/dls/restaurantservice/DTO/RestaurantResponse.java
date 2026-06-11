@@ -18,6 +18,7 @@ public class RestaurantResponse {
     private String openingHours;
     private Boolean isOpen;
     private Boolean isAvailable;
+    private String keycloakId;
 
     public RestaurantResponse(Restaurant restaurant) {
         this.restaurantId = restaurant.getRestaurantId();
@@ -29,5 +30,6 @@ public class RestaurantResponse {
         this.openingHours = restaurant.getOpeningHours();
         this.isOpen = restaurant.getIsOpen();
         this.isAvailable = restaurant.getIsAvailable();
+        this.keycloakId = restaurant.getKeycloakId();
     }
 }
