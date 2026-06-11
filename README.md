@@ -19,25 +19,26 @@ The service exposes both REST and GraphQL endpoints. REST is used for standard C
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/v1/restaurant` | List all restaurants |
-| GET | `/api/v1/restaurant/{id}` | Get restaurant by ID |
-| GET | `/api/v1/restaurant/name/{name}` | Get restaurant by name |
-| GET | `/api/v1/restaurant/available/{isAvailable}` | Get restaurants by availability |
-| GET | `/api/v1/restaurant/open/{isOpen}` | Get restaurants by open status |
-| GET | `/api/v1/restaurant/location/{location}` | Get restaurants by location |
-| GET | `/api/v1/restaurant/paged` | List restaurants with pagination (`?page=0&size=10`) |
-| GET | `/api/v1/restaurant/paged/available/{isAvailable}` | Paginated restaurants by availability |
-| GET | `/api/v1/restaurant/paged/open/{isOpen}` | Paginated restaurants by open status |
-| GET | `/api/v1/restaurant/search` | Search restaurants by query (`?query=pizza`) |
-| POST | `/api/v1/restaurant/add` | Create restaurant |
-| PUT | `/api/v1/restaurant/update/{id}` | Update restaurant |
-| DELETE | `/api/v1/restaurant/delete/{id}` | Delete restaurant |
-| GET | `/api/v1/menu-item` | List all menu items |
-| GET | `/api/v1/menu-item/{id}` | Get menu item by ID |
-| GET | `/api/v1/menu-item/restaurant/{restaurantId}` | Get menu items by restaurant |
-| POST | `/api/v1/menu-item/add` | Create menu item |
-| PUT | `/api/v1/menu-item/update/{id}` | Update menu item |
-| DELETE | `/api/v1/menu-item/delete/{id}` | Delete menu item |
+| GET | `/api/v2/restaurants` | List all restaurants |
+| GET | `/api/v2/restaurants/{id}` | Get restaurant by ID |
+| GET | `/api/v2/restaurants/name/{name}` | Get restaurant by name |
+| GET | `/api/v2/restaurants/available` | Get available restaurants |
+| GET | `/api/v2/restaurants/available/{isAvailable}` | Get restaurants by availability |
+| GET | `/api/v2/restaurants/open/{isOpen}` | Get restaurants by open status |
+| GET | `/api/v2/restaurants/location/{location}` | Get restaurants by location |
+| GET | `/api/v2/restaurants/paged` | List restaurants with pagination (`?page=0&size=10`) |
+| GET | `/api/v2/restaurants/paged/available/{isAvailable}` | Paginated restaurants by availability |
+| GET | `/api/v2/restaurants/paged/open/{isOpen}` | Paginated restaurants by open status |
+| GET | `/api/v2/restaurants/search` | Search restaurants by query (`?query=pizza`) |
+| POST | `/api/v2/restaurants` | Create restaurant |
+| PUT | `/api/v2/restaurants/{id}` | Update restaurant |
+| DELETE | `/api/v2/restaurants/{id}` | Delete restaurant |
+| GET | `/api/v2/restaurants/menu-items` | List all menu items |
+| GET | `/api/v2/restaurants/menu-items/{id}` | Get menu item by ID |
+| GET | `/api/v2/restaurants/menu-items/restaurant/{restaurantId}` | Get menu items by restaurant |
+| POST | `/api/v2/restaurants/menu-items` | Create menu item |
+| PUT | `/api/v2/restaurants/menu-items/{id}` | Update menu item |
+| DELETE | `/api/v2/restaurants/menu-items/{id}` | Delete menu item |
 
 ### Error Handling
 
@@ -82,7 +83,6 @@ restaurant-service/
 │   │   ├── java/com/dls/restaurantservice/
 │   │   │   ├── Configuration/
 │   │   │   │   ├── CorsConfig.java             # CORS configuration
-│   │   │   │   ├── SecurityConfig.java         # Security configuration
 │   │   │   │   └── GlobalExceptionHandler.java # Global error handling
 │   │   │   ├── Controller/
 │   │   │   │   ├── RestaurantController.java   # REST CRUD endpoints
@@ -137,7 +137,7 @@ Starts PostgreSQL and the service together:
 docker compose up --build
 ```
 
-- REST API: http://localhost:8002/api/restaurant
+- REST API: http://localhost:8002/api/v2/restaurants
 - Swagger UI: http://localhost:8002/swagger-ui.html
 - API docs (JSON): http://localhost:8002/api-docs
 - GraphQL playground: http://localhost:8002/graphiql
