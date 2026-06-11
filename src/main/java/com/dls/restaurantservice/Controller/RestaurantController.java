@@ -1,5 +1,7 @@
 package com.dls.restaurantservice.Controller;
 
+import com.dls.authlib.Permission;
+import com.dls.authlib.RequirePermission;
 import com.dls.restaurantservice.DTO.PageResponse;
 import com.dls.restaurantservice.DTO.RestaurantRequest;
 import com.dls.restaurantservice.DTO.RestaurantResponse;
@@ -9,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/restaurant")
+@RequestMapping("/api/v1/restaurants")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
@@ -19,51 +21,61 @@ public class RestaurantController {
     }
 
     @GetMapping
+    @RequirePermission(Permission.RESTAURANTS_READ)
     public List<RestaurantResponse> getAllRestaurants() {
         return restaurantService.GetAllRestaurants();
     }
 
     @GetMapping("/available")
+    @RequirePermission(Permission.RESTAURANTS_READ)
     public List<RestaurantResponse> getAvailableRestaurants() {
         return restaurantService.GetAvailableRestaurants();
     }
 
     @GetMapping("/name/{name}")
+    @RequirePermission(Permission.RESTAURANTS_READ)
     public RestaurantResponse getRestaurantByName(@PathVariable String name) {
         return restaurantService.GetRestaurantByName(name);
     }
 
     @GetMapping("/available/{isAvailable}")
+    @RequirePermission(Permission.RESTAURANTS_READ)
     public List<RestaurantResponse> getRestaurantsByAvailability(@PathVariable Boolean isAvailable) {
         return restaurantService.GetRestaurantsByAvailability(isAvailable);
     }
 
     @GetMapping("/open/{isOpen}")
+    @RequirePermission(Permission.RESTAURANTS_READ)
     public List<RestaurantResponse> getRestaurantsByOpenStatus(@PathVariable Boolean isOpen) {
         return restaurantService.GetRestaurantsByOpenStatus(isOpen);
     }
 
     @GetMapping("/location/{location}")
+    @RequirePermission(Permission.RESTAURANTS_READ)
     public List<RestaurantResponse> getRestaurantsByLocation(@PathVariable String location) {
         return restaurantService.GetRestaurantsByLocation(location);
     }
 
     @GetMapping("/{id}")
+    @RequirePermission(Permission.RESTAURANTS_READ)
     public RestaurantResponse getRestaurantById(@PathVariable String id) {
         return restaurantService.GetRestaurantById(id);
     }
 
-    @PostMapping("/add")
+    @PostMapping
+    @RequirePermission(Permission.RESTAURANTS_CREATE)
     public RestaurantResponse addRestaurant(@RequestBody RestaurantRequest restaurantRequest) {
         return restaurantService.AddRestaurant(restaurantRequest);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
+    @RequirePermission(Permission.RESTAURANTS_UPDATE)
     public RestaurantResponse updateRestaurant(@PathVariable String id, @RequestBody RestaurantRequest restaurantRequest) {
         return restaurantService.UpdateRestaurant(id, restaurantRequest);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
+    @RequirePermission(Permission.RESTAURANTS_DELETE)
     public void deleteRestaurant(@PathVariable String id) {
         restaurantService.DeleteRestaurant(id);
     }
@@ -71,6 +83,7 @@ public class RestaurantController {
     // ---- Pagination ----
 
     @GetMapping("/paged")
+    @RequirePermission(Permission.RESTAURANTS_READ)
     public PageResponse<RestaurantResponse> getAllRestaurantsPaged(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -78,6 +91,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/paged/available/{isAvailable}")
+    @RequirePermission(Permission.RESTAURANTS_READ)
     public PageResponse<RestaurantResponse> getAvailableRestaurantsPaged(
             @PathVariable Boolean isAvailable,
             @RequestParam(defaultValue = "0") int page,
@@ -86,6 +100,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/paged/open/{isOpen}")
+    @RequirePermission(Permission.RESTAURANTS_READ)
     public PageResponse<RestaurantResponse> getOpenRestaurantsPaged(
             @PathVariable Boolean isOpen,
             @RequestParam(defaultValue = "0") int page,
@@ -96,6 +111,7 @@ public class RestaurantController {
     // ---- Søgning ----
 
     @GetMapping("/search")
+    @RequirePermission(Permission.RESTAURANTS_READ)
     public PageResponse<RestaurantResponse> search(
             @RequestParam String query,
             @RequestParam(defaultValue = "0") int page,
