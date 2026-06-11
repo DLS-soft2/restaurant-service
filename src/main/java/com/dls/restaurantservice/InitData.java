@@ -8,6 +8,7 @@ import com.dls.restaurantservice.Repository.RestaurantRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import java.util.UUID;
 
 @Component
 @Profile("!test")
@@ -43,7 +44,7 @@ public class InitData implements CommandLineRunner {
         restaurant1.setIsOpen(true);
         restaurant1.setIsAvailable(true);
         restaurant1.setEstimatedPrepTimeMinutes(20);
-        restaurant1.setExternalId("550e8400-e29b-41d4-a716-446655440001");
+        restaurant1.setRestaurantId("550e8400-e29b-41d4-a716-446655440001");
         restaurantRepository.save(restaurant1);
 
 
@@ -58,12 +59,13 @@ public class InitData implements CommandLineRunner {
         restaurant2.setIsOpen(true);
         restaurant2.setIsAvailable(true);
         restaurant2.setEstimatedPrepTimeMinutes(25);
-        restaurant2.setExternalId("550e8400-e29b-41d4-a716-446655440002");
+        restaurant2.setRestaurantId("550e8400-e29b-41d4-a716-446655440002");
         restaurantRepository.save(restaurant2);
 
 
         // Menu items for restaurant 1
         MenuItem menuItem1 = new MenuItem();
+        menuItem1.setMenuItemId(UUID.randomUUID().toString());
         menuItem1.setName("Margherita");
         menuItem1.setDescription("Klassisk pizza med tomatsauce, mozzarella og frisk basilikum.");
         menuItem1.setPrice(79.99);
@@ -71,6 +73,7 @@ public class InitData implements CommandLineRunner {
         menuItemRepository.save(menuItem1);
 
         MenuItem menuItem2 = new MenuItem();
+        menuItem2.setMenuItemId(UUID.randomUUID().toString());
         menuItem2.setName("Pepperoni");
         menuItem2.setDescription("Pizza med tomatsauce, mozzarella og masser af pepperoni.");
         menuItem2.setPrice(89.99);
@@ -79,6 +82,7 @@ public class InitData implements CommandLineRunner {
 
         // Menu items for restaurant 2
         MenuItem menuItem3 = new MenuItem();
+        menuItem3.setMenuItemId(UUID.randomUUID().toString());
         menuItem3.setName("Pad Thai");
         menuItem3.setDescription("Klassisk thailandsk ret med risnudler, rejer, tofu, æg, jordnødder og en lækker tamarindsauce.");
         menuItem3.setPrice(99.99);
@@ -86,6 +90,7 @@ public class InitData implements CommandLineRunner {
         menuItemRepository.save(menuItem3);
 
         MenuItem menuItem4 = new MenuItem();
+        menuItem4.setMenuItemId(UUID.randomUUID().toString());
         menuItem4.setName("Green Curry");
         menuItem4.setDescription("Krydret thailandsk karryret med kokosmælk, grøn karrypasta, kylling, aubergine og basilikum.");
         menuItem4.setPrice(109.99);

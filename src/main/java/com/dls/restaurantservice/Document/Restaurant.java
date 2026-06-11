@@ -23,9 +23,6 @@ public class Restaurant {
     @Indexed(unique = true)
     private String email;
 
-    @Indexed(unique = true)
-    private String externalId;
-
     private String description;
     private String openingHours;
     private Boolean isOpen;

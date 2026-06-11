@@ -112,7 +112,7 @@ public class RestaurantService {
         validatePhoneNumber(restaurantRequest.getPhoneNumber());
 
         Restaurant restaurant = new Restaurant();
-        restaurant.setExternalId(UUID.randomUUID().toString());
+        restaurant.setRestaurantId(UUID.randomUUID().toString());
         restaurant.setName(restaurantRequest.getName());
         restaurant.setAddress(restaurantRequest.getAddress());
         restaurant.setPhoneNumber(restaurantRequest.getPhoneNumber());

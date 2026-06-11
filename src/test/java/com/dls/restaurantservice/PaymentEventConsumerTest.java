@@ -65,10 +65,9 @@ class PaymentEventConsumerTest {
         when(processedEventRepository.existsById("evt-001")).thenReturn(false);
 
         Restaurant restaurant = new Restaurant();
-        restaurant.setRestaurantId("mongo-obj-id");
-        restaurant.setExternalId("rest-789");
+        restaurant.setRestaurantId("rest-789");
         restaurant.setEstimatedPrepTimeMinutes(20);
-        when(restaurantRepository.findByExternalId("rest-789")).thenReturn(Optional.of(restaurant));
+        when(restaurantRepository.findById("rest-789")).thenReturn(Optional.of(restaurant));
 
         consumer.consume(message);
 
@@ -129,7 +128,7 @@ class PaymentEventConsumerTest {
                 """;
 
         when(processedEventRepository.existsById("evt-003")).thenReturn(false);
-        when(restaurantRepository.findByExternalId("nonexistent")).thenReturn(Optional.empty());
+        when(restaurantRepository.findById("nonexistent")).thenReturn(Optional.empty());
 
         consumer.consume(message);
 
@@ -158,6 +157,6 @@ class PaymentEventConsumerTest {
         verify(processedEventRepository, never()).existsById(anyString());
         verify(processedEventRepository, never()).save(any());
         verify(kafkaTemplate, never()).send(anyString(), anyString(), any());
-        verify(restaurantRepository, never()).findByExternalId(anyString());
+        verify(restaurantRepository, never()).findById(anyString());
     }
 }
