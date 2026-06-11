@@ -77,7 +77,7 @@ public class PaymentEventConsumer {
         }
 
         String restaurantId = event.getRestaurantId();
-        Optional<Restaurant> restaurantOpt = restaurantRepository.findByExternalId(
+        Optional<Restaurant> restaurantOpt = restaurantRepository.findById(
                 restaurantId != null ? restaurantId : "");
 
         if (restaurantOpt.isEmpty()) {

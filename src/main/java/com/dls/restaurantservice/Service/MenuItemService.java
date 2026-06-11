@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,6 +56,7 @@ public class MenuItemService {
         validateRestaurant(restaurant);
 
         MenuItem menuItem = new MenuItem();
+        menuItem.setMenuItemId(UUID.randomUUID().toString());
         menuItem.setName(menuItemRequest.getName());
         menuItem.setDescription(menuItemRequest.getDescription());
         menuItem.setPrice(menuItemRequest.getPrice());
