@@ -5,7 +5,7 @@ Restaurant Profile Service for the food delivery platform. Manages restaurant da
 ## Tech Stack
 
 - **Framework:** Spring Boot 3.2 (Java 21)
-- **Database:** PostgreSQL (Spring Data JPA)
+- **Database:** MongoDB (Spring Data MongoDB)
 - **GraphQL:** Spring for GraphQL
 - **API Docs:** Swagger UI (springdoc-openapi)
 - **Auth:** Keycloak (JWT via API Gateway) + shared RBAC library
@@ -33,12 +33,27 @@ The service exposes both REST and GraphQL endpoints. REST is used for standard C
 | POST | `/api/v2/restaurants` | Create restaurant |
 | PUT | `/api/v2/restaurants/{id}` | Update restaurant |
 | DELETE | `/api/v2/restaurants/{id}` | Delete restaurant |
+| GET | `/api/v2/restaurants/me` | Get restaurant by logged-in user's keycloakId |
+| GET | `/api/v2/restaurants/orders/pending` | List pending orders for calling restaurant |
+| POST | `/api/v2/restaurants/orders/{orderId}/accept` | Accept order, publishes `RestaurantAccepted` |
+| POST | `/api/v2/restaurants/orders/{orderId}/reject` | Reject order with reason, publishes `RestaurantRejected` |
 | GET | `/api/v2/restaurants/menu-items` | List all menu items |
 | GET | `/api/v2/restaurants/menu-items/{id}` | Get menu item by ID |
 | GET | `/api/v2/restaurants/menu-items/restaurant/{restaurantId}` | Get menu items by restaurant |
 | POST | `/api/v2/restaurants/menu-items` | Create menu item |
 | PUT | `/api/v2/restaurants/menu-items/{id}` | Update menu item |
 | DELETE | `/api/v2/restaurants/menu-items/{id}` | Delete menu item |
+
+### Kafka Events
+
+**Consumes:**
+
+- `payments` topic: `PaymentAuthorized` — creates a PendingOrder for the restaurant to accept/reject
+
+**Produces** to `restaurants` topic:
+
+- `RestaurantAccepted` — restaurant accepted the order
+- `RestaurantRejected` — restaurant rejected the order (triggers compensating refund)
 
 ### Error Handling
 
@@ -148,7 +163,7 @@ docker compose up --build
 Tests use H2 in-memory database — no database setup needed:
 
 ```bash
-./mvnw test
+./mvnw test                       # 49 tests
 ```
 
 ## CI/CD
