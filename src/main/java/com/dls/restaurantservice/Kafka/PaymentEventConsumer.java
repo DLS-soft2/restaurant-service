@@ -1,44 +1,35 @@
 package com.dls.restaurantservice.Kafka;
 
+import com.dls.restaurantservice.Document.PendingOrder;
 import com.dls.restaurantservice.Document.ProcessedEvent;
-import com.dls.restaurantservice.Document.Restaurant;
+import com.dls.restaurantservice.Repository.PendingOrderRepository;
 import com.dls.restaurantservice.Repository.ProcessedEventRepository;
-import com.dls.restaurantservice.Repository.RestaurantRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.Optional;
 
 @Component
 public class PaymentEventConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentEventConsumer.class);
 
-    private final RestaurantRepository restaurantRepository;
+    private final PendingOrderRepository pendingOrderRepository;
     private final ProcessedEventRepository processedEventRepository;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ObjectMapper objectMapper;
-    private final String restaurantsTopic;
 
     public PaymentEventConsumer(
-            RestaurantRepository restaurantRepository,
+            PendingOrderRepository pendingOrderRepository,
             ProcessedEventRepository processedEventRepository,
-            KafkaTemplate<String, Object> kafkaTemplate,
-            ObjectMapper objectMapper,
-            @Value("${app.kafka.topic.restaurants}") String restaurantsTopic) {
-        this.restaurantRepository = restaurantRepository;
+            ObjectMapper objectMapper) {
+        this.pendingOrderRepository = pendingOrderRepository;
         this.processedEventRepository = processedEventRepository;
-        this.kafkaTemplate = kafkaTemplate;
         this.objectMapper = objectMapper;
-        this.restaurantsTopic = restaurantsTopic;
     }
 
     @KafkaListener(topics = "${app.kafka.topic.payments}", groupId = "${spring.kafka.consumer.group-id}")
@@ -76,26 +67,19 @@ public class PaymentEventConsumer {
             return;
         }
 
-        String restaurantId = event.getRestaurantId();
-        Optional<Restaurant> restaurantOpt = restaurantRepository.findById(
-                restaurantId != null ? restaurantId : "");
-
-        if (restaurantOpt.isEmpty()) {
-            log.warn("Restaurant not found for id={}, marking event as processed", restaurantId);
+        // Idempotency: skip if a PendingOrder already exists for this orderId
+        if (pendingOrderRepository.existsByOrderId(event.getOrderId())) {
+            log.info("PendingOrder already exists for order_id={}, skipping", event.getOrderId());
             processedEventRepository.save(new ProcessedEvent(eventId, Instant.now()));
             return;
         }
 
-        Restaurant restaurant = restaurantOpt.get();
-        Integer prepTime = restaurant.getEstimatedPrepTimeMinutes() != null
-                ? restaurant.getEstimatedPrepTimeMinutes() : 15;
+        PendingOrder pendingOrder = new PendingOrder(
+                event.getOrderId(), event.getCustomerId(), event.getRestaurantId(),
+                event.getPaymentId(), event.getAmount(), event.getDeliveryAddress());
 
-        RestaurantAcceptedEvent accepted = new RestaurantAcceptedEvent(
-                event.getOrderId(), event.getCustomerId(), restaurantId, prepTime,
-                event.getDeliveryAddress(), restaurant.getAddress());
-
-        kafkaTemplate.send(restaurantsTopic, event.getOrderId(), accepted);
-        log.info("Published RestaurantAccepted for order_id={}", event.getOrderId());
+        pendingOrderRepository.save(pendingOrder);
+        log.info("Saved PendingOrder for order_id={}", event.getOrderId());
 
         processedEventRepository.save(new ProcessedEvent(eventId, Instant.now()));
         log.info("Marked event_id={} as processed", eventId);

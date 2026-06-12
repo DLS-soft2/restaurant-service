@@ -1,11 +1,10 @@
 package com.dls.restaurantservice;
 
+import com.dls.restaurantservice.Document.PendingOrder;
 import com.dls.restaurantservice.Document.ProcessedEvent;
-import com.dls.restaurantservice.Document.Restaurant;
 import com.dls.restaurantservice.Kafka.PaymentEventConsumer;
-import com.dls.restaurantservice.Kafka.RestaurantAcceptedEvent;
+import com.dls.restaurantservice.Repository.PendingOrderRepository;
 import com.dls.restaurantservice.Repository.ProcessedEventRepository;
-import com.dls.restaurantservice.Repository.RestaurantRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,9 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.kafka.core.KafkaTemplate;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -25,13 +21,10 @@ import static org.mockito.Mockito.*;
 class PaymentEventConsumerTest {
 
     @Mock
-    private RestaurantRepository restaurantRepository;
+    private PendingOrderRepository pendingOrderRepository;
 
     @Mock
     private ProcessedEventRepository processedEventRepository;
-
-    @Mock
-    private KafkaTemplate<String, Object> kafkaTemplate;
 
     private PaymentEventConsumer consumer;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -39,16 +32,14 @@ class PaymentEventConsumerTest {
     @BeforeEach
     void setUp() {
         consumer = new PaymentEventConsumer(
-                restaurantRepository,
+                pendingOrderRepository,
                 processedEventRepository,
-                kafkaTemplate,
-                objectMapper,
-                "restaurants"
+                objectMapper
         );
     }
 
     @Test
-    void happyPath_publishesRestaurantAcceptedAndSavesProcessedEvent() {
+    void happyPath_savesPendingOrderWithStatusPending() {
         String message = """
                 {
                     "event_type": "PaymentAuthorized",
@@ -58,31 +49,27 @@ class PaymentEventConsumerTest {
                     "restaurant_id": "rest-789",
                     "payment_id": "pay-111",
                     "amount": 99.99,
+                    "delivery_address": "123 Main St",
                     "timestamp": "2026-06-05T10:00:00Z"
                 }
                 """;
 
         when(processedEventRepository.existsById("evt-001")).thenReturn(false);
-
-        Restaurant restaurant = new Restaurant();
-        restaurant.setRestaurantId("rest-789");
-        restaurant.setEstimatedPrepTimeMinutes(20);
-        when(restaurantRepository.findById("rest-789")).thenReturn(Optional.of(restaurant));
+        when(pendingOrderRepository.existsByOrderId("order-123")).thenReturn(false);
 
         consumer.consume(message);
 
-        ArgumentCaptor<RestaurantAcceptedEvent> eventCaptor = ArgumentCaptor.forClass(RestaurantAcceptedEvent.class);
-        verify(kafkaTemplate).send(eq("restaurants"), eq("order-123"), eventCaptor.capture());
+        ArgumentCaptor<PendingOrder> orderCaptor = ArgumentCaptor.forClass(PendingOrder.class);
+        verify(pendingOrderRepository).save(orderCaptor.capture());
 
-        RestaurantAcceptedEvent published = eventCaptor.getValue();
-        assertEquals("RestaurantAccepted", published.getEventType());
-        assertEquals("order-123", published.getOrderId());
-        assertEquals("cust-456", published.getCustomerId());
-        assertNotNull(published.getRestaurantId());
-        assertEquals("rest-789", published.getRestaurantId());
-        assertEquals(20, published.getEstimatedPrepTime());
-        assertNotNull(published.getEventId());
-        assertNotNull(published.getTimestamp());
+        PendingOrder saved = orderCaptor.getValue();
+        assertEquals("order-123", saved.getOrderId());
+        assertEquals("cust-456", saved.getCustomerId());
+        assertEquals("rest-789", saved.getRestaurantId());
+        assertEquals("pay-111", saved.getPaymentId());
+        assertEquals(99.99, saved.getAmount());
+        assertEquals("PENDING", saved.getStatus());
+        assertNotNull(saved.getCreatedAt());
 
         ArgumentCaptor<ProcessedEvent> processedCaptor = ArgumentCaptor.forClass(ProcessedEvent.class);
         verify(processedEventRepository).save(processedCaptor.capture());
@@ -108,35 +95,32 @@ class PaymentEventConsumerTest {
 
         consumer.consume(message);
 
-        verify(kafkaTemplate, never()).send(anyString(), anyString(), any());
+        verify(pendingOrderRepository, never()).save(any());
         verify(processedEventRepository, never()).save(any());
     }
 
     @Test
-    void restaurantNotFound_marksProcessedButDoesNotPublish() {
+    void duplicateOrderId_skipsCreationButMarksProcessed() {
         String message = """
                 {
                     "event_type": "PaymentAuthorized",
-                    "event_id": "evt-003",
-                    "order_id": "order-999",
+                    "event_id": "evt-002",
+                    "order_id": "order-123",
                     "customer_id": "cust-456",
-                    "restaurant_id": "nonexistent",
-                    "payment_id": "pay-222",
-                    "amount": 25.0,
+                    "restaurant_id": "rest-789",
+                    "payment_id": "pay-111",
+                    "amount": 50.0,
                     "timestamp": "2026-06-05T10:00:00Z"
                 }
                 """;
 
-        when(processedEventRepository.existsById("evt-003")).thenReturn(false);
-        when(restaurantRepository.findById("nonexistent")).thenReturn(Optional.empty());
+        when(processedEventRepository.existsById("evt-002")).thenReturn(false);
+        when(pendingOrderRepository.existsByOrderId("order-123")).thenReturn(true);
 
         consumer.consume(message);
 
-        verify(kafkaTemplate, never()).send(anyString(), anyString(), any());
-
-        ArgumentCaptor<ProcessedEvent> captor = ArgumentCaptor.forClass(ProcessedEvent.class);
-        verify(processedEventRepository).save(captor.capture());
-        assertEquals("evt-003", captor.getValue().getEventId());
+        verify(pendingOrderRepository, never()).save(any());
+        verify(processedEventRepository).save(any());
     }
 
     @Test
@@ -156,7 +140,6 @@ class PaymentEventConsumerTest {
 
         verify(processedEventRepository, never()).existsById(anyString());
         verify(processedEventRepository, never()).save(any());
-        verify(kafkaTemplate, never()).send(anyString(), anyString(), any());
-        verify(restaurantRepository, never()).findById(anyString());
+        verify(pendingOrderRepository, never()).save(any());
     }
 }
